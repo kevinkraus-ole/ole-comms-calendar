@@ -34,7 +34,7 @@ export default function AdminDashboardClient({ events: initial, user }: Props) {
   async function handleSave(data: Partial<Communication>) {
     if (editing) {
       const { data: updated, error } = await supabase
-        .from('communications')
+        .from('mkt_comms_communications')
         .update({ ...data, updated_at: new Date().toISOString() })
         .eq('id', editing.id)
         .select()
@@ -44,7 +44,7 @@ export default function AdminDashboardClient({ events: initial, user }: Props) {
       setEditing(null)
     } else {
       const { data: created, error } = await supabase
-        .from('communications')
+        .from('mkt_comms_communications')
         .insert({ ...data, created_by: user.email })
         .select()
         .single()
@@ -55,7 +55,7 @@ export default function AdminDashboardClient({ events: initial, user }: Props) {
   }
 
   async function handleDelete(id: string) {
-    const { error } = await supabase.from('communications').delete().eq('id', id)
+    const { error } = await supabase.from('mkt_comms_communications').delete().eq('id', id)
     if (error) throw error
     setEvents(prev => prev.filter(e => e.id !== id))
   }

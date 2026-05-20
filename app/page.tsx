@@ -7,7 +7,7 @@ export const revalidate = 60
 export default async function HomePage() {
   const supabase = await createClient()
   const { data, error } = await supabase
-    .from('communications')
+    .from('mkt_comms_communications')
     .select('*')
     .order('scheduled_at', { ascending: true })
 

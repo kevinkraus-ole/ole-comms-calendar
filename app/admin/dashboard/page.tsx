@@ -10,7 +10,7 @@ export default async function AdminDashboard() {
   if (!user) redirect('/admin/login')
 
   const { data } = await supabase
-    .from('communications')
+    .from('mkt_comms_communications')
     .select('*')
     .order('scheduled_at', { ascending: true })
 
