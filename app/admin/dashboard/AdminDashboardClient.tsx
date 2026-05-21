@@ -1,9 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import type { User } from '@supabase/supabase-js'
 import type { ChannelType, Communication } from '@/lib/types'
 import { CHANNEL_CONFIG, STATUS_CONFIG } from '@/lib/types'
 import ChannelLegend from '@/components/ChannelLegend'
@@ -14,22 +12,15 @@ const CommCalendar = dynamic(() => import('@/components/CommCalendar'), { ssr: f
 
 interface Props {
   events: Communication[]
-  user: User
 }
 
-export default function AdminDashboardClient({ events: initial, user }: Props) {
-  const router = useRouter()
+export default function AdminDashboardClient({ events: initial }: Props) {
   const [events, setEvents] = useState(initial)
   const [filter, setFilter] = useState<ChannelType | 'all'>('all')
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Communication | null>(null)
 
   const supabase = createClient()
-
-  async function logout() {
-    await supabase.auth.signOut()
-    router.push('/admin/login')
-  }
 
   async function handleSave(data: Partial<Communication>) {
     if (editing) {
@@ -45,7 +36,7 @@ export default function AdminDashboardClient({ events: initial, user }: Props) {
     } else {
       const { data: created, error } = await supabase
         .from('mkt_comms_communications')
-        .insert({ ...data, created_by: user.email })
+        .insert({ ...data, created_by: 'marketing@olelife.com' })
         .select()
         .single()
       if (error) throw error
@@ -82,7 +73,7 @@ export default function AdminDashboardClient({ events: initial, user }: Props) {
             </div>
             <div>
               <h1 className="text-base font-semibold text-gray-900 leading-none">Marketing Calendar</h1>
-              <p className="text-xs text-gray-500">Admin · {user.email}</p>
+              <p className="text-xs text-gray-500">Admin</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -94,9 +85,6 @@ export default function AdminDashboardClient({ events: initial, user }: Props) {
               className="text-xs font-medium bg-[#1A1A2E] text-white rounded-lg px-3 py-1.5 hover:bg-[#2d2d4e] transition-colors"
             >
               + Nueva comunicación
-            </button>
-            <button onClick={logout} className="text-xs text-gray-400 hover:text-gray-600 px-2">
-              Salir
             </button>
           </div>
         </div>
